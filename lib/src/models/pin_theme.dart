@@ -34,13 +34,13 @@ class PinTheme {
   /// Width of the input field which is currently selected. Default is 2
   final double selectedBorderWidth;
 
-    /// Width of the input fields which don't have inputs. Default is 2
+  /// Width of the input fields which don't have inputs. Default is 2
   final double inactiveBorderWidth;
 
   /// Width of the input fields if the [PinCodeTextField] is disabled. Default is 2
   final double disabledBorderWidth;
 
-    /// Width of the input field when in error mode. Default is 2
+  /// Width of the input field when in error mode. Default is 2
   final double errorBorderWidth;
 
   /// Border radius of each pin code field
@@ -51,6 +51,9 @@ class PinTheme {
 
   /// [width] for the pin code field. default is [40.0]
   final double fieldWidth;
+
+  /// Constraints the size of the pin code field. Overrides [fieldWidth] if set.
+  final BoxConstraints? fieldWidthConstraints;
 
   /// Border width for the each input fields. Default is [2.0]
   final double borderWidth;
@@ -71,6 +74,7 @@ class PinTheme {
     this.borderRadius = BorderRadius.zero,
     this.fieldHeight = 50,
     this.fieldWidth = 40,
+    this.fieldWidthConstraints,
     this.borderWidth = 2,
     this.fieldOuterPadding = EdgeInsets.zero,
     this.shape = PinCodeFieldShape.underline,
@@ -105,6 +109,7 @@ class PinTheme {
     BorderRadius? borderRadius,
     double? fieldHeight,
     double? fieldWidth,
+    BoxConstraints? fieldWidthConstraints,
     double? borderWidth,
     double? activeBorderWidth,
     double? selectedBorderWidth,
@@ -125,6 +130,8 @@ class PinTheme {
       disabledColor: disabledColor ?? defaultValues.disabledColor,
       fieldHeight: fieldHeight ?? defaultValues.fieldHeight,
       fieldWidth: fieldWidth ?? defaultValues.fieldWidth,
+      fieldWidthConstraints:
+          fieldWidthConstraints ?? defaultValues.fieldWidthConstraints,
       inactiveColor: inactiveColor ?? defaultValues.inactiveColor,
       inactiveFillColor: inactiveFillColor ?? defaultValues.inactiveFillColor,
       disabledFillColor: disabledFillColor ?? defaultValues.disabledFillColor,

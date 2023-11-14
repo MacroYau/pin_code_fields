@@ -879,76 +879,90 @@ class _PinCodeTextFieldState extends State<PinCodeTextField>
   List<Widget> _generateFields() {
     var result = <Widget>[];
     for (int i = 0; i < widget.length; i++) {
-      result.add(
-        Container(
-            padding: _pinTheme.fieldOuterPadding,
-            child: AnimatedContainer(
-              curve: widget.animationCurve,
-              duration: widget.animationDuration,
-              width: _pinTheme.fieldWidth,
-              height: _pinTheme.fieldHeight,
-              decoration: BoxDecoration(
-                color: widget.enableActiveFill
-                    ? _getFillColorFromIndex(i)
-                    : Colors.transparent,
-                boxShadow: (_pinTheme.activeBoxShadows != null ||
-                        _pinTheme.inActiveBoxShadows != null)
-                    ? _getBoxShadowFromIndex(i)
-                    : widget.boxShadows,
-                shape: _pinTheme.shape == PinCodeFieldShape.circle
-                    ? BoxShape.circle
-                    : BoxShape.rectangle,
-                borderRadius: borderRadius,
-                border: _pinTheme.shape == PinCodeFieldShape.underline
-                    ? Border(
-                        bottom: BorderSide(
-                          color: _getColorFromIndex(i),
-                          width: _getBorderWidthForIndex(i),
-                        ),
-                      )
-                    : Border.all(
-                        color: _getColorFromIndex(i),
-                        width: _getBorderWidthForIndex(i),
-                      ),
-              ),
-              child: Center(
-                child: AnimatedSwitcher(
-                  switchInCurve: widget.animationCurve,
-                  switchOutCurve: widget.animationCurve,
-                  duration: widget.animationDuration,
-                  transitionBuilder: (child, animation) {
-                    if (widget.animationType == AnimationType.scale) {
-                      return ScaleTransition(
-                        scale: animation,
-                        child: child,
-                      );
-                    } else if (widget.animationType == AnimationType.fade) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: child,
-                      );
-                    } else if (widget.animationType == AnimationType.none) {
-                      return child;
-                    } else {
-                      return SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0, .5),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      );
-                    }
-                  },
-                  child: buildChild(i),
-                ),
-              ),
-            )),
-      );
+      if (_pinTheme.fieldWidthConstraints == null) {
+        result.add(_fieldBuilder(i));
+      } else {
+        result.add(Flexible(
+          child: ConstrainedBox(
+            // Note: Only `maxWidth` is proven to be respected
+            constraints: _pinTheme.fieldWidthConstraints!,
+            child: _fieldBuilder(i),
+          ),
+        ));
+      }
       if (widget.separatorBuilder != null && i != widget.length - 1) {
         result.add(widget.separatorBuilder!(context, i));
       }
     }
     return result;
+  }
+
+  Widget _fieldBuilder(int index) {
+    return Container(
+        padding: _pinTheme.fieldOuterPadding,
+        child: AnimatedContainer(
+          curve: widget.animationCurve,
+          duration: widget.animationDuration,
+          width: (_pinTheme.fieldWidthConstraints == null)
+              ? _pinTheme.fieldWidth
+              : null,
+          height: _pinTheme.fieldHeight,
+          decoration: BoxDecoration(
+            color: widget.enableActiveFill
+                ? _getFillColorFromIndex(index)
+                : Colors.transparent,
+            boxShadow: (_pinTheme.activeBoxShadows != null ||
+                    _pinTheme.inActiveBoxShadows != null)
+                ? _getBoxShadowFromIndex(index)
+                : widget.boxShadows,
+            shape: _pinTheme.shape == PinCodeFieldShape.circle
+                ? BoxShape.circle
+                : BoxShape.rectangle,
+            borderRadius: borderRadius,
+            border: _pinTheme.shape == PinCodeFieldShape.underline
+                ? Border(
+                    bottom: BorderSide(
+                      color: _getColorFromIndex(index),
+                      width: _getBorderWidthForIndex(index),
+                    ),
+                  )
+                : Border.all(
+                    color: _getColorFromIndex(index),
+                    width: _getBorderWidthForIndex(index),
+                  ),
+          ),
+          child: Center(
+            child: AnimatedSwitcher(
+              switchInCurve: widget.animationCurve,
+              switchOutCurve: widget.animationCurve,
+              duration: widget.animationDuration,
+              transitionBuilder: (child, animation) {
+                if (widget.animationType == AnimationType.scale) {
+                  return ScaleTransition(
+                    scale: animation,
+                    child: child,
+                  );
+                } else if (widget.animationType == AnimationType.fade) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                } else if (widget.animationType == AnimationType.none) {
+                  return child;
+                } else {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, .5),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  );
+                }
+              },
+              child: buildChild(index),
+            ),
+          ),
+        ));
   }
 
   void _onFocus() {
